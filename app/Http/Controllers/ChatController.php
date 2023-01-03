@@ -43,6 +43,26 @@ class ChatController extends Controller
         return new ChatResource(true, null, $chats);
     }
 
+    public function notificationCheck(Request $request){
+        $userClient = User::where('phone_number', $request->phone_number)->first();
+        $chatSent = Chat::select('chats.id','chats.sender','users.name as recipient','chats.message','chats.created_at')
+                        ->join('users','users.id','chats.recipient')
+                        ->where('sender', Auth::user()->id)
+                        ->where('recipient', $userClient->id)
+                        ->get();
+        $chatReceived = Chat::select('chats.id','users.name as sender','chats.recipient','chats.message','chats.created_at')
+                        ->join('users','users.id','chats.sender')
+                        ->where('sender', $userClient->id)
+                        ->where('recipient', Auth::user()->id)
+                        ->get();
+        $chat_merged = $chatSent->merge($chatReceived);
+        $chats = $chat_merged->sortBy([
+            ['created_at','desc']
+        ]);
+        $chats->values()->all();
+        return view('chats.notification', compact('chats'));
+    }
+
     public function sendMessage(Request $request){
         $validator = Validator::make($request->all(), [
             'message' => 'required',

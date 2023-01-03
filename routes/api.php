@@ -17,6 +17,9 @@ Route::post('/account_register',[App\Http\Controllers\UserController::class, 'st
 Route::post('/account_login',[App\Http\Controllers\UserController::class, 'login'])->name('account_login');
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat');
     Route::get('/account_logout', [App\Http\Controllers\UserController::class, 'logout'])->name('logout');
+    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat');
+    Route::get('/chat/with', [App\Http\Controllers\ChatController::class, 'chatWith'])->name('chat.with');
+    Route::post('/chat/send_to', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send_to');
+    Route::get('/chat/notification', [App\Http\Controllers\ChatController::class, 'notificationCheck'])->name('chat.notification');
 });
