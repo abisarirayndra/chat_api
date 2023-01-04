@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Validator;
 use App\Models\User;
 use Hash;
-use App\Http\Resources\ChatResource;
+use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
@@ -36,7 +36,7 @@ class UserController extends Controller
             'photo' => $photo_name,
         ]);
 
-        return new ChatResource(true, 'Register Account Successfull !', $user_account);
+        return new UserResource(true, 'Register Account Successfull !', $user_account);
     }
 
     public function login(Request $request){
@@ -51,9 +51,9 @@ class UserController extends Controller
 
         $user_account = User::where('email', $request->email)->first();
         if(!$user_account){
-            return new ChatResource(false, 'Account Not Found, Please Register Before!', null);
+            return new UserResource(false, 'Account Not Found, Please Register Before!', null);
         }elseif(!Hash::check($request->password, $user_account->password)){
-            return new ChatResource(false, 'Wrong Password! Try Again!', null);
+            return new UserResource(false, 'Wrong Password! Try Again!', null);
         }
 
         $token = $user_account->createToken('token')->plainTextToken;
@@ -61,7 +61,7 @@ class UserController extends Controller
             'user_account' => $user_account,
             'token' => $token,
         ]);
-        return new ChatResource(true, 'Login Successfull!', $data);
+        return new UserResource(true, 'Login Successfull!', $data);
     }
 
     public function logout(Request $request){
