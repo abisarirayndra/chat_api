@@ -32,15 +32,19 @@ class ChatController extends Controller
                             ->where('chat_logs.recipient', Auth::user()->id)
                             ->orderBy('chat_logs.created_at','desc')
                             ->get();
-        if(!$latest){
-            return response()->json(['latest_conversation' => null]);
-        }
-        return response()->json(['latest_conversation' => $latest]);
+
+        return response()->json(['success' => true, 'latest_conversation' => $latest], 200);
     }
 
     // Function for show we chat with spesific user (include, sent and received message)
     public function chatWith(Request $request){
         $userClient = User::select('id','name','phone_number','photo')->where('phone_number', $request->phone_number)->first();
+        if(Auth::user()->phone_number == $request->phone_number){
+            return response()->json([
+                'success' => false,
+                'message' => "You can't chat with yourself"
+            ], 404);
+        }
         $readChats = Chat::where('sender', $userClient->id)
                             ->where('recipient', Auth::user()->id)
                             ->where('status', false)
@@ -82,7 +86,7 @@ class ChatController extends Controller
         }elseif($request->phone_number == Auth::user()->phone_number){
             return response()->json([
                 'message' => 'Cannot send to yourself'
-            ], 422);
+            ], 404);
         }
         $userClient = User::where('phone_number', $request->phone_number)->first();
         $sent = Chat::create([
@@ -105,7 +109,7 @@ class ChatController extends Controller
         $chats = collect($chat_merged->sortBy([['created_at','desc']]))->first();
         $log = ChatLogs::where('sender', Auth::user()->id)
                         ->where('recipient', $userClient->id)
-                        ->get();
+                        ->first();
         if(!$log){
             $unreadChats = Chat::where('recipient', $userClient->id)
                                 ->where('sender', Auth::user()->id)
@@ -116,6 +120,13 @@ class ChatController extends Controller
                 'recipient' => $userClient->id,
                 'latest_message' => $chats->id,
                 'unread_count' => $unreadChats,
+            ]);
+
+            ChatLogs::create([
+                'sender' => $userClient->id,
+                'recipient' => Auth::user()->id,
+                'latest_message' => $chats->id,
+                'unread_count' => 0,
             ]);
         }else{
             $unreadChats = Chat::where('recipient', $userClient->id)
@@ -139,6 +150,10 @@ class ChatController extends Controller
                         ]);
         }
         ServerChatCreated::dispatch($sent);
-        return new ChatResource(true, 'Message Sent!', $sent);
+        return response()->json([
+            'success' => true,
+            'message' => 'Message Sent Success!',
+            'data' => $sent,
+        ], 201);
     }
 }

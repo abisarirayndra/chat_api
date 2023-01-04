@@ -16,18 +16,20 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'phone_number' => 'required|numeric|unique:users',
             'password' => 'required',
-            'photo' => 'required|image|mimes:jpg,png,jpeg,webp|max:1024'
         ]);
 
         if($validator->fails()){
             return response()->json($validator->errors(), 422);
         }
 
-        $photo_name = 'user-'.$request->phone_number.'.'.$request->file('photo')->extension();
-        $photo = $request->file('photo');
-        $path = public_path('user_photo/');
-        $photo->move($path, $photo_name);
-
+        if($request->file('photo')){
+            $photo_name = 'user-'.$request->phone_number.'.'.$request->file('photo')->extension();
+            $photo = $request->file('photo');
+            $path = public_path('user_photo/');
+            $photo->move($path, $photo_name);
+        }else{
+            $photo_name = null;
+        }
         $user_account = User::create([
             'name' => $request->name,
             'email' => $request->email,
