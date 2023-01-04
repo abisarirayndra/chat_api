@@ -21,7 +21,7 @@ class UserController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors(), 422);
         }
-
+        
         if($request->file('photo')){
             $photo_name = 'user-'.$request->phone_number.'.'.$request->file('photo')->extension();
             $photo = $request->file('photo');
@@ -30,6 +30,7 @@ class UserController extends Controller
         }else{
             $photo_name = null;
         }
+
         $user_account = User::create([
             'name' => $request->name,
             'email' => $request->email,
