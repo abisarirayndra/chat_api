@@ -7,19 +7,34 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## Chat API
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+If you want to see the code : 
+This is the simple project of Chat API contains 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Account Register
+    - The first step to access this project is register the account. It's need request(form-data):
+        - name
+        - email
+        - password
+        - phone_number
+        - photo (file)
+- Account Login
+    - If the account successfully registered, you need to login for get the access to the project, it's need request (form-data) :
+        - email
+        - password
+- User List (Need Auth)
+    - This API can show you about the registered account except you. You will able to see who you will chat with.
+- Latest Chat List (Need Auth)
+    - This API can show you the information about your list chat history, you can also get information about the latest message, latest conversation with unread count
+        information, and the basic information (name, phone number) about the recipient of your chats.
+- Chat With (Need Auth)
+    - This API informs you abaout the list of message from the spesific user according the request (phone number)
+- Send Chat (Need Auth)
+    - This API will send the message to recipient according the request
+- Account Logout (Need Auth)
+    - This API will logout your account and if you want to go back, you need login again.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
 ## Learning Laravel
 
